@@ -80,7 +80,7 @@ function ProjectPage() {
               {project.summary}
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
-              {project.pins.map((p) => (
+              {project.pins.map((p: { pin: string; label: string }) => (
                 <PinTag key={p.pin} pin={p.pin} label={p.label} />
               ))}
             </div>
@@ -127,7 +127,7 @@ function ProjectPage() {
               {block.label}
             </span>
             <ul className="mt-4 space-y-2">
-              {block.items.map((h) => (
+              {block.items.map((h: string) => (
                 <li key={h} className="flex items-center gap-3 text-sm">
                   <span className="size-1.5 rounded-full" style={{ background: tone }} />
                   {h}
