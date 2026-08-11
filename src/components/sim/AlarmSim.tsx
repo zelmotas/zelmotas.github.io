@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Lcd, PushButton, RgbLed, Buzzer, SerialMonitor } from "@/components/hardware";
+import { Bench3D } from "@/components/three/Bench3D";
 
 type State = "DISARMED" | "ARMING" | "ARMED" | "ALARM";
 const CODE = [4, 2, 7];
@@ -85,8 +86,22 @@ export function AlarmSim() {
           : ["!! INTRUDER !!", `Code: ${entered.join("")}${"_".repeat(3 - entered.length)}`];
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-      <motion.div
+    <div className="grid gap-6">
+      <Bench3D
+        state={{
+          kind: "alarm",
+          lcd,
+          rgb,
+          pir: motionPing,
+          siren: state === "ALARM" || state === "ARMING",
+          pot: pot / 9,
+          onPot: (v) => setPot(Math.round(v * 9)),
+          onArm: arm,
+          onSelect: select,
+        }}
+      />
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <motion.div
         animate={
           state === "ALARM"
             ? { boxShadow: ["0 0 0 0 transparent", "0 0 60px -10px var(--danger)", "0 0 0 0 transparent"] }
@@ -159,10 +174,11 @@ export function AlarmSim() {
           </div>
         </div>
       </motion.div>
-      <div className="flex flex-col gap-4">
-        <Lcd line1={lcd[0]} line2={lcd[1]} />
-        <Buzzer active={state === "ALARM" || state === "ARMING"} />
-        <SerialMonitor lines={log} />
+        <div className="flex flex-col gap-4">
+          <Lcd line1={lcd[0]} line2={lcd[1]} />
+          <Buzzer active={state === "ALARM" || state === "ARMING"} />
+          <SerialMonitor lines={log} />
+        </div>
       </div>
     </div>
   );
