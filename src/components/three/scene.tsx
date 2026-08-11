@@ -168,7 +168,7 @@ export default function Scene({ state }: { state: RigState }) {
     <Canvas
       shadows
       dpr={[1, 1.8]}
-      camera={{ position: [0, 11, 13], fov: 42 }}
+      camera={{ position: [0, 9.5, 12.5], fov: 44 }}
       gl={{ antialias: true }}
     >
       <color attach="background" args={["#0a0c0e"]} />
