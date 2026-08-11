@@ -47,7 +47,7 @@ export function ArduinoBoard() {
       </mesh>
       {/* silk text */}
       <Text
-        position={[0, 0.16, 1.9]}
+        position={[0, 0.16, 1.35]}
         rotation={[-Math.PI / 2, 0, 0]}
         fontSize={0.26}
         color="#eaf7f7"
