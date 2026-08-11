@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Lcd, PushButton, RgbLed, Buzzer } from "@/components/hardware";
+import { Bench3D } from "@/components/three/Bench3D";
 
 export function BirthdaySim() {
   const [timer, setTimer] = useState(0);
@@ -55,10 +56,14 @@ export function BirthdaySim() {
       : ["Set Time:", `${timer} Secs  `];
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="panel relative overflow-hidden rounded-lg p-6">
-        <div className="pcb-grid absolute inset-0 opacity-40" />
-        <div className="relative flex flex-col items-center gap-6">
+    <div className="grid gap-6">
+      <Bench3D
+        state={{ kind: "birthday", lcd, rgb: { r, g, b }, buzzer: done, onButton: click }}
+      />
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="panel relative overflow-hidden rounded-lg p-6">
+          <div className="pcb-grid absolute inset-0 opacity-40" />
+          <div className="relative flex flex-col items-center gap-6">
           <div className="relative grid size-56 place-items-center">
             <svg viewBox="0 0 100 100" className="absolute size-full -rotate-90">
               <circle cx="50" cy="50" r="44" fill="none" stroke="var(--border)" strokeWidth="3" />
@@ -121,13 +126,14 @@ export function BirthdaySim() {
           )}
         </AnimatePresence>
       </div>
-      <div className="flex flex-col gap-4">
-        <Lcd line1={lcd[0]} line2={lcd[1]} />
-        <Buzzer active={done} />
-        <div className="panel rounded-lg p-4 font-mono text-xs leading-relaxed text-muted-foreground">
-          <span className="text-signal">setColor()</span> interpolates the RGB LED from green to
-          red across the countdown, and <span className="text-signal">playHappyBirthday()</span>{" "}
-          drives the piezo once the timer hits zero.
+        <div className="flex flex-col gap-4">
+          <Lcd line1={lcd[0]} line2={lcd[1]} />
+          <Buzzer active={done} />
+          <div className="panel rounded-lg p-4 font-mono text-xs leading-relaxed text-muted-foreground">
+            <span className="text-signal">setColor()</span> interpolates the RGB LED from green to
+            red across the countdown, and <span className="text-signal">playHappyBirthday()</span>{" "}
+            drives the piezo once the timer hits zero.
+          </div>
         </div>
       </div>
     </div>

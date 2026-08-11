@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Lcd, Led, PushButton, Buzzer, SerialMonitor } from "@/components/hardware";
+import { Bench3D } from "@/components/three/Bench3D";
 
 type Phase = "idle" | "arming" | "hold" | "go" | "result" | "jump";
 
@@ -92,8 +93,18 @@ export function ReactionSim() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="panel relative overflow-hidden rounded-lg p-6">
+    <div className="grid gap-6">
+      <Bench3D
+        state={{
+          kind: "reaction",
+          lights: lit,
+          buzzer: phase === "go" || phase === "result",
+          lcd: lines[phase],
+          onButton: press,
+        }}
+      />
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="panel relative overflow-hidden rounded-lg p-6">
         <div className="pcb-grid absolute inset-0 opacity-40" />
         <div className="relative flex flex-col items-center gap-8">
           <div className="flex gap-4 sm:gap-6">
@@ -130,10 +141,11 @@ export function ReactionSim() {
           </p>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        <Lcd line1={lines[phase][0]} line2={lines[phase][1]} />
-        <Buzzer active={phase === "go" || phase === "result"} />
-        <SerialMonitor lines={log} />
+        <div className="flex flex-col gap-4">
+          <Lcd line1={lines[phase][0]} line2={lines[phase][1]} />
+          <Buzzer active={phase === "go" || phase === "result"} />
+          <SerialMonitor lines={log} />
+        </div>
       </div>
     </div>
   );

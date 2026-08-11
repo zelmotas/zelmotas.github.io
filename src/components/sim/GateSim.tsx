@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { PushButton, SerialMonitor } from "@/components/hardware";
+import { Bench3D } from "@/components/three/Bench3D";
 
 export function GateSim() {
   const [distance, setDistance] = useState(80);
@@ -36,9 +37,22 @@ export function GateSim() {
   }, [distance]);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="panel relative overflow-hidden rounded-lg p-6">
-        <div className="pcb-grid absolute inset-0 opacity-40" />
+    <div className="grid gap-6">
+      <Bench3D
+        state={{
+          kind: "gate",
+          lcd: [
+            `Distance:${Math.round(distance)}cm`,
+            angle < 180 ? "Gate CLOSED" : "Gate OPEN",
+          ],
+          distance,
+          onDistance: (v) => setDistance(Math.round(v)),
+          angle: 180 - angle,
+        }}
+      />
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="panel relative overflow-hidden rounded-lg p-6">
+          <div className="pcb-grid absolute inset-0 opacity-40" />
         <div className="relative">
           <div className="relative h-64 overflow-hidden rounded-md border border-border bg-background/60">
             {/* sensor */}
@@ -111,21 +125,22 @@ export function GateSim() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        <div className="panel rounded-lg p-5">
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-signal">
-            time of flight
+        <div className="flex flex-col gap-4">
+          <div className="panel rounded-lg p-5">
+            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-signal">
+              time of flight
+            </div>
+            <div className="mt-3 font-mono text-sm text-muted-foreground">
+              duration ={" "}
+              <span className="text-foreground">{Math.round((distance * 2) / 0.034)}</span> µs
+            </div>
+            <div className="font-mono text-sm text-muted-foreground">
+              distance = duration × 0.034 / 2 ={" "}
+              <span className="text-solder">{Math.round(distance)} cm</span>
+            </div>
           </div>
-          <div className="mt-3 font-mono text-sm text-muted-foreground">
-            duration = <span className="text-foreground">{Math.round((distance * 2) / 0.034)}</span>{" "}
-            µs
-          </div>
-          <div className="font-mono text-sm text-muted-foreground">
-            distance = duration × 0.034 / 2 ={" "}
-            <span className="text-solder">{Math.round(distance)} cm</span>
-          </div>
+          <SerialMonitor lines={log} />
         </div>
-        <SerialMonitor lines={log} />
       </div>
     </div>
   );

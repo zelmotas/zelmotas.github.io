@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { Lcd, PushButton, RgbLed, Buzzer } from "@/components/hardware";
+import { Bench3D } from "@/components/three/Bench3D";
 
 type State = "SETUP" | "READY" | "P1" | "P2" | "OVER";
 const modes = [60, 180, 300, 600];
@@ -111,9 +112,20 @@ export function ChessSim() {
   );
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="panel relative overflow-hidden rounded-lg p-6">
-        <div className="pcb-grid absolute inset-0 opacity-40" />
+    <div className="grid gap-6">
+      <Bench3D
+        state={{
+          kind: "chess",
+          lcd,
+          rgb,
+          buzzer: state === "OVER",
+          onBtn1: btn1,
+          onBtn2: btn2,
+        }}
+      />
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="panel relative overflow-hidden rounded-lg p-6">
+          <div className="pcb-grid absolute inset-0 opacity-40" />
         <div className="relative grid gap-4">
           <Clock label="Player 1 · red" time={p1} active={state === "P1"} tone="oklch(0.63 0.216 22)" />
           <Clock label="Player 2 · blue" time={p2} active={state === "P2"} tone="oklch(0.62 0.19 258)" />
@@ -128,17 +140,18 @@ export function ChessSim() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        <Lcd line1={lcd[0]} line2={lcd[1]} />
-        <div className="panel rounded-lg p-4 font-mono text-xs text-muted-foreground">
-          <div className="mb-2 uppercase tracking-[0.3em] text-signal">state</div>
-          <div className="text-2xl text-foreground">{state}</div>
-          <p className="mt-3 leading-relaxed">
-            SETUP: btn1 cycles 1/3/5/10 min, btn2 confirms. READY: either button starts the
-            opponent&apos;s clock. Pressing your own button hands the move over.
-          </p>
+        <div className="flex flex-col gap-4">
+          <Lcd line1={lcd[0]} line2={lcd[1]} />
+          <div className="panel rounded-lg p-4 font-mono text-xs text-muted-foreground">
+            <div className="mb-2 uppercase tracking-[0.3em] text-signal">state</div>
+            <div className="text-2xl text-foreground">{state}</div>
+            <p className="mt-3 leading-relaxed">
+              SETUP: btn1 cycles 1/3/5/10 min, btn2 confirms. READY: either button starts the
+              opponent&apos;s clock. Pressing your own button hands the move over.
+            </p>
+          </div>
+          <Buzzer active={state === "OVER"} />
         </div>
-        <Buzzer active={state === "OVER"} />
       </div>
     </div>
   );
